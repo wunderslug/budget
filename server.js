@@ -22,13 +22,17 @@ const defaultState = {
     { id: 6, name: "Car insurance", amount: 140, dueDay: 25, frequency: "monthly" },
     { id: 7, name: "Groceries", amount: 150, dueDay: 1, frequency: "weekly" },
     { id: 8, name: "Gas / Fuel", amount: 60, dueDay: 1, frequency: "weekly" }
-  ]
+  ],
+  accounts: [],
+  plannedExpenses: []
 };
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
 
 function cleanState(raw = {}) {
   const expenses = Array.isArray(raw.expenses) ? raw.expenses : [];
+  const accounts = Array.isArray(raw.accounts) ? raw.accounts : [];
+  const plannedExpenses = Array.isArray(raw.plannedExpenses) ? raw.plannedExpenses : [];
   return {
     balance: Number.isFinite(Number(raw.balance)) ? Number(raw.balance) : 0,
     weeklyIncome: Number.isFinite(Number(raw.weeklyIncome)) ? Number(raw.weeklyIncome) : 0,
@@ -38,6 +42,19 @@ function cleanState(raw = {}) {
       amount: Math.max(0, Number(e.amount) || 0),
       dueDay: Math.max(1, Math.min(31, Number(e.dueDay) || 1)),
       frequency: e.frequency === "weekly" ? "weekly" : "monthly"
+    })),
+    accounts: accounts.slice(0, 50).map((a, i) => ({
+      id: Number.isFinite(Number(a.id)) ? Number(a.id) : Date.now() + 1000 + i,
+      name: String(a.name || "Savings").slice(0, 60),
+      balance: Math.max(0, Number(a.balance) || 0)
+    })),
+    plannedExpenses: plannedExpenses.slice(0, 200).map((p, i) => ({
+      id: Number.isFinite(Number(p.id)) ? Number(p.id) : Date.now() + 2000 + i,
+      name: String(p.name || "Planned expense").slice(0, 80),
+      amount: Math.max(0, Number(p.amount) || 0),
+      targetDate: /^\d{4}-\d{2}-\d{2}$/.test(String(p.targetDate || "")) ? String(p.targetDate) : "",
+      saved: Math.max(0, Number(p.saved) || 0),
+      repeatsYearly: Boolean(p.repeatsYearly)
     }))
   };
 }
@@ -47,11 +64,8 @@ function loadState() {
     fs.writeFileSync(DATA_FILE, JSON.stringify(defaultState, null, 2));
     return defaultState;
   }
-  try {
-    return cleanState(JSON.parse(fs.readFileSync(DATA_FILE, "utf8")));
-  } catch {
-    return defaultState;
-  }
+  try { return cleanState(JSON.parse(fs.readFileSync(DATA_FILE, "utf8"))); }
+  catch { return defaultState; }
 }
 
 function saveState(state) {
@@ -64,17 +78,10 @@ function saveState(state) {
 
 app.use(express.json({ limit: "200kb" }));
 app.use(express.static(path.join(__dirname, "public")));
-
 app.get("/api/state", (_req, res) => res.json(loadState()));
 app.put("/api/state", (req, res) => {
-  try {
-    res.json(saveState(req.body));
-  } catch {
-    res.status(500).json({ error: "Could not save changes." });
-  }
+  try { res.json(saveState(req.body)); }
+  catch { res.status(500).json({ error: "Could not save changes." }); }
 });
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
-
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Weekly Money Planner running on port ${PORT}`);
-});
+app.listen(PORT, "0.0.0.0", () => console.log(`Weekly Money Planner running on port ${PORT}`));
