@@ -68,7 +68,7 @@
     const ending = rows.length ? rows[rows.length - 1].balance : 0;
     const lowest = rows.length ? Math.min(...rows.map(r => r.balance)) : 0;
 
-    const width = 760, height = 210, left = 18, right = 18, top = 20, bottom = 34;
+    const width = 760, height = 210, left = 18, right = 18, top = 28, bottom = 34;
     const vals = rows.map(r => r.balance);
     let min = Math.min(0, ...vals), max = Math.max(0, ...vals);
     if (max === min) max = min + 1;
@@ -80,7 +80,21 @@
     const points = rows.map((r, i) => `${x(i)},${y(r.balance)}`).join(" ");
 
     const labels = rows.map((r, i) => `<text x="${x(i)}" y="${height - 9}" text-anchor="middle">${r.label}</text>`).join("");
-    const dots = rows.map((r, i) => `<circle cx="${x(i)}" cy="${y(r.balance)}" r="4"><title>${r.label}: ${money(r.balance)}</title></circle>`).join("");
+    const dots = rows.map((r, i) => {
+      const px = x(i), py = y(r.balance);
+      const amount = money(r.balance);
+      const tooltipWidth = Math.max(82, amount.length * 8 + 22);
+      const tooltipX = Math.max(4, Math.min(width - tooltipWidth - 4, px - tooltipWidth / 2));
+      const tooltipY = Math.max(4, py - 39);
+      return `<g class="outlook-point" tabindex="0" role="img" aria-label="${r.label}: ${amount}">
+        <circle class="outlook-hit" cx="${px}" cy="${py}" r="15"></circle>
+        <circle class="outlook-dot" cx="${px}" cy="${py}" r="4"></circle>
+        <g class="outlook-tooltip" aria-hidden="true">
+          <rect x="${tooltipX}" y="${tooltipY}" width="${tooltipWidth}" height="28" rx="7"></rect>
+          <text x="${tooltipX + tooltipWidth / 2}" y="${tooltipY + 19}" text-anchor="middle">${amount}</text>
+        </g>
+      </g>`;
+    }).join("");
 
     root.innerHTML = `
       <div class="outlook-totals">
