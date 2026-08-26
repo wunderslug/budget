@@ -1,10 +1,16 @@
-const addAccountButton = document.querySelector("#addAccount");
-const accountFormPanel = document.querySelector("#accountFormPanel");
+function openPanelWithoutJump(buttonSelector, panelSelector) {
+  const button = document.querySelector(buttonSelector);
+  const panel = document.querySelector(panelSelector);
+  if (!button || !panel) return;
 
-if (addAccountButton && accountFormPanel) {
-  addAccountButton.onclick = () => {
-    accountFormPanel.classList.add("open");
-    const firstInput = accountFormPanel.querySelector("input");
-    if (firstInput) firstInput.focus({ preventScroll: true });
+  button.onclick = () => {
+    panel.classList.add("open");
+    const firstInput = panel.querySelector("input, select, button");
+    if (firstInput && typeof firstInput.focus === "function") {
+      firstInput.focus({ preventScroll: true });
+    }
   };
 }
+
+openPanelWithoutJump("#addAccount", "#accountFormPanel");
+openPanelWithoutJump("#addPlanned", "#plannedFormPanel");
