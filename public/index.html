@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#111315">
 <title>Weekly Money Planner</title>
-<link rel="stylesheet" href="/styles.css?v=20260825-1">
+<link rel="stylesheet" href="/styles.css?v=20260826-1">
 </head>
 <body>
 <main class="wrap">
@@ -26,6 +26,11 @@
 
   <section class="card section">
     <h2>Your next 6 weeks</h2><p>Open any week to see exactly how the number was calculated.</p><div id="forecast"></div>
+  </section>
+
+  <section class="card section outlook-card">
+    <div class="headrow"><div><h2>Two-month outlook</h2><p>A quick picture of whether your available money is trending up or down.</p></div></div>
+    <div id="twoMonthForecast"><div class="empty">Building your forecast…</div></div>
   </section>
 
   <section class="card section">
@@ -56,5 +61,6 @@
 </main>
 <script src="/app.js?v=20260825-1" defer></script>
 <script src="/ux-fixes.js?v=20260825-2" defer></script>
+<script src="/forecast-graph.js?v=20260826-1" defer></script>
 </body>
 </html>
