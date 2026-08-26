@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f7fb">
+<title>Weekly Money Planner</title>
+
+<link rel="stylesheet" href="/styles.css">
+
+</head>
+<body>
+<main class="wrap">
+  <h1 class="title">Weekly Money Planner</h1>
+  <p class="sub">A quiet view of what comes in, what goes out, and where you’ll be each week.</p>
+
+  <section class="top">
+    <div class="card">
+      <div class="label">Current balance</div>
+      <div class="money-edit" style="margin-top:5px">
+        <input class="quick-input" id="balanceInput" type="number" min="0" step=".01" aria-label="Current balance">
+        <button class="btn primary" id="saveBalance" type="button">Save</button>
+      </div>
+      <div class="label" style="margin-top:8px">What you have available right now.</div>
+      <div class="save-note" id="balanceNote"></div>
+    </div>
+    <div class="card">
+      <div class="label">Weekly income</div>
+      <div class="money-edit" style="margin-top:5px">
+        <input class="quick-input" id="incomeInput" type="number" min="0" step=".01" aria-label="Weekly income">
+        <button class="btn primary" id="saveIncome" type="button">Save</button>
+      </div>
+      <div class="save-note" id="incomeNote"></div>
+    </div>
+  </section>
+
+  <section class="card section">
+    <h2>Your next 6 weeks</h2>
+    <p>Open any week to see exactly how the number was calculated.</p>
+    <div id="forecast"></div>
+  </section>
+
+  <section class="card section">
+    <div class="headrow">
+      <div><h2>Your expenses</h2><p>Edit the amount or due date, or remove anything you don’t have.</p></div>
+      <div class="actions"><button class="btn primary" id="showPresets">+ Add from list</button><button class="btn" id="customExpense">Custom expense</button></div>
+    </div>
+    <div id="expenses"></div>
+  </section>
+
+  <section class="card panel" id="presetsPanel">
+    <div class="headrow"><div><h2>Add an expense</h2><p>Pick one, then enter your actual amount and due date.</p></div><button class="btn" id="closePresets">Close</button></div>
+    <div class="preset-grid" id="presetGrid"></div>
+  </section>
+
+  <section class="card panel" id="formPanel">
+    <h2 id="formTitle">Edit</h2><p id="formHelp"></p>
+    <form id="form">
+      <div class="formgrid" id="formFields"></div>
+      <div class="status" id="status"></div>
+      <div class="formactions"><button class="btn primary" type="submit">Save</button><button class="btn" type="button" id="cancelForm">Cancel</button></div>
+    </form>
+  </section>
+</main>
+
+<script src="/app.js" defer></script>
+</body>
+</html>
