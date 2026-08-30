@@ -8,7 +8,6 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = 3025;
 const DATA_DIR = path.join(__dirname, "data");
-const DATA_FILE = path.join(DATA_DIR, "state.json");
 
 const defaultState = {
   balance: 1000,
@@ -23,6 +22,14 @@ const defaultState = {
     { id: 7, name: "Groceries", amount: 150, dueDay: 1, frequency: "weekly" },
     { id: 8, name: "Gas / Fuel", amount: 60, dueDay: 1, frequency: "weekly" }
   ],
+  accounts: [],
+  plannedExpenses: []
+};
+
+const emptyState = {
+  balance: 0,
+  weeklyIncome: 0,
+  expenses: [],
   accounts: [],
   plannedExpenses: []
 };
@@ -59,28 +66,43 @@ function cleanState(raw = {}) {
   };
 }
 
-function loadState() {
-  if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(defaultState, null, 2));
-    return defaultState;
-  }
-  try { return cleanState(JSON.parse(fs.readFileSync(DATA_FILE, "utf8"))); }
-  catch { return defaultState; }
+function budgetNumber(req) {
+  return String(req.query.budget) === "2" ? 2 : 1;
 }
 
-function saveState(state) {
+function dataFileFor(budget) {
+  return path.join(DATA_DIR, budget === 2 ? "state-2.json" : "state.json");
+}
+
+function initialStateFor(budget) {
+  return budget === 2 ? emptyState : defaultState;
+}
+
+function loadState(budget = 1) {
+  const file = dataFileFor(budget);
+  const initial = initialStateFor(budget);
+  if (!fs.existsSync(file)) {
+    fs.writeFileSync(file, JSON.stringify(initial, null, 2));
+    return initial;
+  }
+  try { return cleanState(JSON.parse(fs.readFileSync(file, "utf8"))); }
+  catch { return initial; }
+}
+
+function saveState(state, budget = 1) {
+  const file = dataFileFor(budget);
   const clean = cleanState(state);
-  const tmp = DATA_FILE + ".tmp";
+  const tmp = file + ".tmp";
   fs.writeFileSync(tmp, JSON.stringify(clean, null, 2));
-  fs.renameSync(tmp, DATA_FILE);
+  fs.renameSync(tmp, file);
   return clean;
 }
 
 app.use(express.json({ limit: "200kb" }));
 app.use(express.static(path.join(__dirname, "public")));
-app.get("/api/state", (_req, res) => res.json(loadState()));
+app.get("/api/state", (req, res) => res.json(loadState(budgetNumber(req))));
 app.put("/api/state", (req, res) => {
-  try { res.json(saveState(req.body)); }
+  try { res.json(saveState(req.body, budgetNumber(req))); }
   catch { res.status(500).json({ error: "Could not save changes." }); }
 });
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
