@@ -67,7 +67,18 @@ function cleanState(raw = {}) {
 }
 
 function budgetNumber(req) {
-  return String(req.query.budget) === "2" ? 2 : 1;
+  if (String(req.query.budget) === "2") return 2;
+  if (String(req.query.budget) === "1") return 1;
+
+  try {
+    const referer = req.get("referer");
+    if (referer) {
+      const pageUrl = new URL(referer);
+      if (pageUrl.searchParams.get("budget") === "2") return 2;
+    }
+  } catch {}
+
+  return 1;
 }
 
 function dataFileFor(budget) {
