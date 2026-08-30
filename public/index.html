@@ -5,12 +5,20 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#111315">
 <title>Weekly Money Planner</title>
-<link rel="stylesheet" href="/styles.css?v=20260826-2">
+<link rel="stylesheet" href="/styles.css?v=20260829-1">
+<style>
+.budget-tabs{display:flex;gap:8px;margin:0 0 18px;padding:5px;background:#1b1e22;border:1px solid var(--border);border-radius:13px;width:max-content;max-width:100%}.budget-tab{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 14px;border-radius:9px;color:var(--muted);text-decoration:none;font-weight:650;font-size:14px}.budget-tab:hover{color:var(--text);background:#25292f}.budget-tab.active{color:#fff;background:linear-gradient(180deg,var(--accent-2),var(--accent))}.budget-context{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}.budget-context .small{font-size:12px}@media(max-width:430px){.budget-tabs{width:100%}.budget-tab{flex:1}}
+</style>
 </head>
 <body>
 <main class="wrap">
-  <h1 class="title">Weekly Money Planner</h1>
+  <div class="budget-context"><h1 class="title">Weekly Money Planner</h1><span class="small" id="activeBudgetLabel">Main budget</span></div>
   <p class="sub">A quiet view of what comes in, what goes out, and where you’ll be each week.</p>
+
+  <nav class="budget-tabs" aria-label="Budgets">
+    <a class="budget-tab" data-budget-tab="1" href="/?budget=1">Main budget</a>
+    <a class="budget-tab" data-budget-tab="2" href="/?budget=2">Budget 2</a>
+  </nav>
 
   <section class="top">
     <div class="card">
@@ -59,6 +67,7 @@
   <section class="card panel" id="presetsPanel"><div class="headrow"><div><h2>Add an expense</h2><p>Pick one, then enter your actual amount and due date.</p></div><button class="btn" id="closePresets">Close</button></div><div class="preset-grid" id="presetGrid"></div></section>
   <section class="card panel" id="formPanel"><h2 id="formTitle">Edit</h2><p id="formHelp"></p><form id="form"><div class="formgrid" id="formFields"></div><div class="status" id="status"></div><div class="formactions"><button class="btn primary" type="submit">Save</button><button class="btn" type="button" id="cancelForm">Cancel</button></div></form></section>
 </main>
+<script src="/budget-tabs.js?v=20260829-1"></script>
 <script src="/app.js?v=20260825-1" defer></script>
 <script src="/ux-fixes.js?v=20260825-2" defer></script>
 <script src="/forecast-graph.js?v=20260826-2" defer></script>
